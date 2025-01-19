@@ -1,0 +1,17 @@
+plugins {
+    id 'application'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'net.dv8tion:JDA:5.2.0'
+	implementation 'io.github.cdimascio:dotenv-kotlin:6.5.0'
+    implementation 'ch.qos.logback:logback-classic:1.4.11' // Logger recomendado
+}
+
+application {
+    mainClass = 'com.core.App'
+}

@@ -1,0 +1,15 @@
+<configuration>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Ajusta el nivel de logging -->
+    <logger name="net.dv8tion.jda" level="WARN" /> <!-- Solo warnings y errores de JDA -->
+    <logger name="io.github.cdimascio.dotenv" level="ERROR" /> <!-- Solo errores de dotenv -->
+
+    <root level="WARN">
+        <appender-ref ref="CONSOLE" />
+    </root>
+</configuration>
