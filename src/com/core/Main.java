@@ -13,9 +13,10 @@ public class Main {
 
 	static {
 		HikariConfig config = new HikariConfig();
-		config.setJdbcUrl("jdbc:mysql://na02-db.cus.mc-panel.net/db_847364");
-		config.setUsername("db_847364");
-		config.setPassword("f045ff5165");
+		config.setJdbcUrl("jdbc:mysql://localhost:3306/test_db");
+		config.setUsername("naimyc");
+		config.setPassword("password");
+		// config.setTransactionIsolation("TRANSACTION_READ_COMMITTED"); // Explicitly set isolation level
 		config.setMaximumPoolSize(10); // Adjust as needed
 		config.setMinimumIdle(2);
 
@@ -29,13 +30,13 @@ public class Main {
 	public static void main(String[] args) {
 		
 		try (Connection connection = getConnection();
-				PreparedStatement preparedStatement = connection.prepareStatement("select * from users;");
+				PreparedStatement preparedStatement = connection.prepareStatement("select * from Persons;");
 				ResultSet resultSet = preparedStatement.executeQuery()) {
 				
 			 while (resultSet.next()) {
-	                int id = resultSet.getInt("mc_id");
-	                String name = resultSet.getString("discord_name");
-	                String d_id = resultSet.getString("discord_id");
+	                int id = resultSet.getInt("PersonID");
+	                String name = resultSet.getString("LastName");
+	                String d_id = resultSet.getString("Address");
 
 	                System.out.println(id + "\t" + name + "\t\t" + d_id);
 	            }
