@@ -3,6 +3,8 @@ package com.core;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
+import io.github.cdimascio.dotenv.Dotenv;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,13 +12,15 @@ import java.sql.SQLException;
 
 public class Main {
 	private static final HikariDataSource dataSource;
-
+	static Dotenv dotenv = Dotenv.load();
+    static String user = dotenv.get("MYSQL_USER");
+    static String pass = dotenv.get("MYSQL_PASS");
+    
 	static {
 		HikariConfig config = new HikariConfig();
 		config.setJdbcUrl("jdbc:mysql://localhost:3306/test_db");
-		config.setUsername("naimyc");
-		config.setPassword("password");
-		// config.setTransactionIsolation("TRANSACTION_READ_COMMITTED"); // Explicitly set isolation level
+		config.setUsername(user);
+		config.setPassword(pass);
 		config.setMaximumPoolSize(10); // Adjust as needed
 		config.setMinimumIdle(2);
 
