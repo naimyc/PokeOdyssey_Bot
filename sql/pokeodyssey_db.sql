@@ -17,7 +17,8 @@ create table
         
         isBanned TINYINT (1) DEFAULT 0,
         isMuted TINYINT (1) DEFAULT 0,
-        isRegistered TINYINT (1) DEFAULT 0,         isActive TINYINT (1) DEFAULT 1,
+        isRegistered TINYINT (1) DEFAULT 0,         
+        isActive TINYINT (1) DEFAULT 1,
         
         registerDate DATETIME DEFAULT NOW(),
 
