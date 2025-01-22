@@ -12,13 +12,18 @@ import java.sql.SQLException;
 
 public class Main {
 	private static final HikariDataSource dataSource;
-	static Dotenv dotenv = Dotenv.load();
-    static String user = dotenv.get("MYSQL_USER");
-    static String pass = dotenv.get("MYSQL_PASS");
+	
+	static Credentials c = new Credentials();
+	
+	static String user = c.getLocalUser();
+	static String pass = c.getLocalPass();
+	static String link = c.getLocalLink();
+	static String db = c.getLocalDB();
     
 	static {
+
 		HikariConfig config = new HikariConfig();
-		config.setJdbcUrl("jdbc:mysql://localhost:3306/test_db");
+		config.setJdbcUrl("jdbc:mysql://"+ link + db);
 		config.setUsername(user);
 		config.setPassword(pass);
 		config.setMaximumPoolSize(10); // Adjust as needed
@@ -34,13 +39,13 @@ public class Main {
 	public static void main(String[] args) {
 		
 		try (Connection connection = getConnection();
-				PreparedStatement preparedStatement = connection.prepareStatement("select * from Persons;");
+				PreparedStatement preparedStatement = connection.prepareStatement("select * from users order by mc_id ASC;");
 				ResultSet resultSet = preparedStatement.executeQuery()) {
 				
 			 while (resultSet.next()) {
-	                int id = resultSet.getInt("PersonID");
-	                String name = resultSet.getString("LastName");
-	                String d_id = resultSet.getString("Address");
+	                int id = resultSet.getInt("mc_id");
+	                String name = resultSet.getString("discord_name");
+	                String d_id = resultSet.getString("discord_id");
 
 	                System.out.println(id + "\t" + name + "\t\t" + d_id);
 	            }

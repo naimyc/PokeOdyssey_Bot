@@ -1,4 +1,4 @@
-package com.functions.users;
+package com.users;
 
 import net.dv8tion.jda.api.entities.User;
 
@@ -7,6 +7,7 @@ public class MC_User {
     {
         JAVA, BEDROCK
     }
+    
     private int user_id, xuuid;
     private edition mc_edition;
     double balance;

@@ -3,8 +3,9 @@ package com.commands;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import com.functions.users.MC_User;
-import com.interfaces.Interfaces.Command;;
+
+import com.interfaces.Interfaces.Command;
+import com.users.MC_User;;
 
 public class Register implements Command
 {
