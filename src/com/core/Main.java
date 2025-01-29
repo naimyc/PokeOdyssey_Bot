@@ -21,9 +21,10 @@ public class Main {
 	static String db = c.getLocalDB();
     
 	static {
-
+		System.out.println(link + db);
 		HikariConfig config = new HikariConfig();
 		config.setJdbcUrl("jdbc:mysql://"+ link + db);
+
 		config.setUsername(user);
 		config.setPassword(pass);
 		config.setMaximumPoolSize(10); // Adjust as needed
@@ -39,11 +40,11 @@ public class Main {
 	public static void main(String[] args) {
 		
 		try (Connection connection = getConnection();
-				PreparedStatement preparedStatement = connection.prepareStatement("select * from users order by mc_id ASC;");
+				PreparedStatement preparedStatement = connection.prepareStatement("select * from mc_users order by user_id ASC;");
 				ResultSet resultSet = preparedStatement.executeQuery()) {
 				
 			 while (resultSet.next()) {
-	                int id = resultSet.getInt("mc_id");
+	                int id = resultSet.getInt("user_id");
 	                String name = resultSet.getString("discord_name");
 	                String d_id = resultSet.getString("discord_id");
 

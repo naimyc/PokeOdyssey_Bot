@@ -37,29 +37,30 @@ public class SQL {
             e.printStackTrace();
         }
     }
-	public String[] queryDatabase(String query, Object[] values) {
-		String[] s = {""};
-		
-        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-
-            // Set values dynamically
-            for (int i = 0; i < values.length; i++) {
-                stmt.setString(i + 1, values[i]);
-            }
-
-            // Execute query
-                ResultSet rs = stmt.executeQuery();
-                while (rs.next()) {
-                    // Process result set as needed
-                    System.out.println("Result: " + rs.getString(1));
-
-                } 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return s;
-    }
+	
+//	public String[] queryDatabase(String query, Object[] values) {
+//		String[] s = {""};
+//		
+//        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+//             PreparedStatement stmt = conn.prepareStatement(query)) {
+//
+//            // Set values dynamically
+//            for (int i = 0; i < values.length; i++) {
+//                stmt.setString(i + 1, values[i]);
+//            }
+//
+//            // Execute query
+//                ResultSet rs = stmt.executeQuery();
+//                while (rs.next()) {
+//                    // Process result set as needed
+//                    System.out.println("Result: " + rs.getString(1));
+//
+//                } 
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//        return s;
+//    }
 	
 
 }

@@ -1,8 +1,8 @@
 create database pokeodyssey_db;
 
-create table
-    mc_users (
+create table mc_users (
         user_id int NOT NULL UNIQUE,
+        discord_id int NOT NULL UNIQUE,
         xuuid int NOT NULL UNIQUE,
         mc_edition int NOT NULL,
         
@@ -13,7 +13,9 @@ create table
         discord_name varchar(25) NOT NULL,
         mcpe_name varchar(25),
         mc_name varchar(25),
+        
         email varchar(50) UNIQUE,
+        password varchar(50) UNIQUE,
         
         isBanned TINYINT (1) DEFAULT 0,
         isMuted TINYINT (1) DEFAULT 0,
