@@ -1,18 +1,21 @@
-package com.core;
+package com.events;
 
+import com.commands.Daily;
 import com.commands.Ping;
 import com.commands.Register;
+import com.exceptions.MC_ErrorLog;
+
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-public class Listener extends ListenerAdapter
+public class CommandListener extends ListenerAdapter
 {
     Register register = new Register();
     Ping ping = new Ping();
-    
+    Daily daily = new Daily();
 
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event)
@@ -20,16 +23,21 @@ public class Listener extends ListenerAdapter
         // Only accept commands from guilds
         if (event.getGuild() == null)
             return;
+        
         switch (event.getName())
         {
             case "ping":
                 ping.execute(event);
                 break;
+            case "daily":
+            	daily.execute(event);
+            	break;
             case "register":
                 register.execute(event);
                 break;
             default:
-                event.reply("I can't handle that command right now :(").setEphemeral(true).queue();
+                event.reply("I can't handle that command right now :(").setEphemeral(false).queue();
+                new MC_ErrorLog("I can't handle that command right now :(", null);
                 break;
         }
     }

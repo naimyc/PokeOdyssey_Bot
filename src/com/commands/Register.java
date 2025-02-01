@@ -1,67 +1,114 @@
 package com.commands;
 
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import okhttp3.Response;
-import okhttp3.ResponseBody;
-
-import org.json.JSONObject;
-
-import com.http.HTTP;
+import java.awt.Color;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
+import org.json.JSONException;
+import com.entities.MC_PokeMember;
+import com.entities.PokeMember;
+import com.exceptions.MC_ErrorLog;
+import com.exceptions.MC_Exception;
+import com.exceptions.XBoxTagException;
+import com.exceptions.XboxException;
 import com.interfaces.Interfaces.Command;
-import com.users.MC_User;
+import com.interfaces.Interfaces.MC_ExceptionMessages;
 
-public class Register implements Command {
-	HTTP http = new HTTP();
+public class Register implements Command, MC_ExceptionMessages {
+	TextChannel log_channel;
 
+	// https://api.mojang.com/users/profiles/minecraft/BatmanPro77281 
+
+	// **Image API
+	// https://crafthead.net/avatar/268720cf258940b0b63b5166c91ea799
 	@Override
 	public void execute(SlashCommandInteractionEvent event) {
+
+		User user = event.getUser();
+
+		String tag = event.getOption("mc_tag").getAsString();
+		int mc_edition = event.getOption("mc_edition").getAsInt();
+		Role pokeRole = event.getJDA().getRoleById("1335300084086214758");
+
+		String discordName = user.getName();
+		String discordId = user.getId();
+
 		try {
-			
-			// https://api.mojang.com/users/profiles/minecraft/
-			// https://crafthead.net/avatar/268720cf258940b0b63b5166c91ea799
-			
-			User user = event.getUser();
-			String tag = event.getOption("mc_tag").getAsString();
 
-			int mc_edition = event.getOption("mc_edition").getAsInt();
+			// Create new user in the db
+			EmbedBuilder eb = new EmbedBuilder();
+			boolean userExists = new PokeMember().userExists(user);
 
-			String discordName = user.getName();
-			String discordId = user.getId();
+			new MC_PokeMember(user, mc_edition, tag);
 
-			Response response = http.getResponse("https://api.mojang.com/users/profiles/minecraft/" + tag);
-			ResponseBody responseBody = response.body();
+			String statusStr = "### 🛠️ __Estado__:\n### || Procesando usuario...||";
 
-			int responseCode = response.code();
+			if (!userExists)
+				eb.setDescription("```" + discordName.toUpperCase()
+						+ " \"'s profile has added to the database successfully!" + tag + "!```\n" + statusStr);
+			else
+				eb.setDescription(
+						"```" + discordName.toUpperCase() + "'s profile has been changed successfully!```" + statusStr);
 
-			if (responseBody == null || responseCode == 404) {
-				String errorLog = String.format(
-						"EROR %d\n\nError while getting data of \n\nUser: %s\nUser_id: %s\nMC_Edition: %d\nTag: %s",
-						responseCode, discordName, discordId, mc_edition, tag);
+			eb.setThumbnail(user.getAvatarUrl()).setColor(new Color(005511));
 
-				TextChannel channel = event.getJDA().getTextChannelById(logChannel);
-				channel.sendMessage(errorLog).queue();
-				
-				event.reply("Unexpected error: Please try later again :(").queue();
-				return;
-			}
+			event.replyEmbeds(eb.build()).queue();
+			event.getGuild().addRoleToMember(user, pokeRole).queue();
 
-			JSONObject jsonObject = new JSONObject(responseBody.string());
-			String id = jsonObject.getString("id");
+		} catch (XboxException e) {
 
-			
+			String errorLog = String.format("ERROR %d\n\nUser: %s\nUser_id: %s\nMC_Edition: %d\nTag: %s",
+					e.getResponseCode(), discordName, discordId, mc_edition, tag);
 
-			MC_User mc_user = new MC_User(user, id, mc_edition, (mc_edition == MC_User.Mc_Edition.JAVA) ? tag : null,
-					(mc_edition == MC_User.Mc_Edition.BEDROCK) ? tag : null);
+			log_channel = event.getJDA().getTextChannelById(logChannel);
+			log_channel.sendMessage(errorLog).queue();
 
-			event.reply(user.getName().toUpperCase() + " has been registered with the tag: " + tag).queue();
-		} catch (Exception e) {
-			// TODO: handle exception
-			event.reply("Unexpected Error: Please try later again :(").queue();
-			System.out.println(e);
+			new MC_ErrorLog(xBoxError, e);
+			event.reply(xBoxError).queue();
+		} catch (XBoxTagException e) {
+
+			String errorLog = String.format("ERROR %d\n\nUser: %s\nUser_id: %s\nMC_Edition: %d\nTag: %s",
+					e.getResponseCode(), discordName, discordId, mc_edition, tag);
+
+			log_channel = event.getJDA().getTextChannelById(logChannel);
+			log_channel.sendMessage(errorLog).queue();
+			new MC_ErrorLog(xBoxError, e);
+			event.reply(xBoxError).queue();
+		} catch (MC_Exception e) {
+
+			event.reply(unexpectedError).queue();
+			new MC_ErrorLog(unexpectedError, e);
+
+			e.printStackTrace();
+		} catch (JSONException e) {
+
+			event.reply(unexpectedError).queue();
+			new MC_ErrorLog(unexpectedError, e);
+
+			e.printStackTrace();
+		} catch (IOException e) {
+
+			event.reply(unexpectedError).queue();
+			new MC_ErrorLog(unexpectedError, e);
+
+			e.printStackTrace();
+		} catch (SQLIntegrityConstraintViolationException e) {
+
+			event.reply(userExistsError).queue();
+			new MC_ErrorLog(userExistsError, e);
+
+			e.printStackTrace();
+		} catch (SQLException e) {
+
+			event.reply(sqlError).queue();
+			new MC_ErrorLog(sqlError, e);
+
+			e.printStackTrace();
 		}
 	}
 }
